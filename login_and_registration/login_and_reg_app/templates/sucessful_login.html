@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+    <div id="header">
+    <!-- <h1>Success! Welcome {{ request.session.firstname }}</h1> -->
+        <h1>CodingDojo Wall</h1>
+        <h5>Welcome {{ request.session.firstname }}</h5>
+        <a href="/logout">Log Out</a>
+    </div>
+    <form action="/new_post" method="POST">
+        {% csrf_token %}
+        <div class="formLabel">
+            <label for="postcontents">Post a message</label>
+            <textarea name="postContent" id="postMessage" cols="50" rows="10"></textarea>
+        </div>
+        <input type="submit" value="Post a message">
+    </form>
+    <div id="wall_messages">
+        {% for message in all_messages %}
+        <div class="message">
+            <h5>Posted By: {{message.poster.firstname}} {{message.poster.lastname}}</h5>
+            <p>{{message.created_at}}</p>
+            <p>{{message.message}}</p>
+
+            {% for comment in message.comments.all %}
+                <h6>{{comment.poster.firstname}} {{comment.poster.lastname}}</h6>
+                <p>{{comment.created_at}}</p>
+                <p>{{comment.comment_content}}</p>
+            {% endfor %}
+            <form action="/new_comment" method="POST">
+                {% csrf_token %}
+                <div class="formLabel">
+                    <label for="post_comment">Post a comment</label>
+                    <textarea name="content" id="postMessage" cols="20" rows="1"></textarea>
+                    <input type="hidden" name="message" value="{{message.id}}">
+                </div>
+                <input type="submit" value="Post a comment">
+            </form>
+        {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
